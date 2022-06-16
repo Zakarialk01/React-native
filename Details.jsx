@@ -13,32 +13,29 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { Avatar, Button, Card, Title, Paragraph } from "react-native-paper";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-const Details = ({
-  navigation,
-  history,
-
-  title,
-  calories,
-  image,
-  ingredients,
-  cautions,
-  totalWeight,
-  cuisineType,
-  healthLabels,
-  digest,
-}) => {
-  // const item = route.params;
+const Details = ({ navigation, route }) => {
+  const recipe = route.params.recipe;
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: true,
     });
   }, [navigation]);
-  console.log(ingredients);
 
+  console.log(recipe);
   return (
     <SafeAreaView style={{ backgroundColor: "white" }}>
       <View style={style.header}>
-        <Text style={{ fontSize: 20, fontWeight: "bold" }}>Details</Text>
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: "600",
+
+            marginLeft: "auto",
+            marginRight: "auto",
+          }}
+        >
+          {recipe.label}
+        </Text>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View
@@ -49,8 +46,13 @@ const Details = ({
           }}
         >
           <Image
-            source={require("./assets/recipe.png")}
-            style={{ height: 220, width: 220 }}
+            source={recipe.image}
+            style={{
+              height: 250,
+              width: 280,
+              borderRadius: "50px",
+              boxShadow: "5px 2px 12px	#38003c",
+            }}
           />
         </View>
         <View style={style.details}>
@@ -61,19 +63,54 @@ const Details = ({
               alignItems: "center",
             }}
           >
-            <Text style={{ fontSize: 25, fontWeight: "bold", color: "white" }}>
-              pizza
-            </Text>
-            <View style={style.iconContainer}></View>
+            {recipe.healthLabels.slice(3, 4).map((free) => (
+              <Text
+                style={{ fontSize: 25, fontWeight: "bold", color: "#04f5ff" }}
+              >
+                {free}
+              </Text>
+            ))}
+            <View style={style.iconContainer}>
+              <Text style={{ color: "white", fontWeight: "700" }}>
+                {recipe.calories.toFixed()}Cal
+              </Text>
+            </View>
           </View>
-          <Text style={style.detailsText}>
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley of type
-            and scrambled it to make a type specimen book. It has survived not
-            only five centuries.
+
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Text>
+              {recipe.digest.slice(0, 3).map((macro) => (
+                <Text style={style.detailsTextMacro}>
+                  <View style={style.iconContainerMacro}> </View> {macro.label}{" "}
+                  = {macro.total.toFixed()} {macro.unit} <br />
+                </Text>
+              ))}
+            </Text>
+            <View>
+              {recipe.digest.slice(6, 9).map((micro) => (
+                <Text style={style.detailsTextMicro}>
+                  <View style={style.iconContainerMicro}> </View> {micro.label}{" "}
+                  = {micro.total.toFixed()} {micro.unit}
+                </Text>
+              ))}
+            </View>
+          </View>
+          <Text style={style.detailsTextMicro}>
+            {recipe.ingredients.map((ing) => (
+              <>
+                <View style={style.iconContainerIng}> </View>{" "}
+                <Text style={style.detailsTextMicro}> {ing.text} </Text>
+                <br />
+              </>
+            ))}
           </Text>
-          <View style={{ marginTop: 40, marginBottom: 40 }}>zz</View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -88,7 +125,8 @@ const style = StyleSheet.create({
     marginHorizontal: 20,
   },
   details: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 25,
+
     paddingTop: 40,
     paddingBottom: 60,
     backgroundColor: "#38003c",
@@ -96,14 +134,41 @@ const style = StyleSheet.create({
     borderTopLeftRadius: 40,
   },
   iconContainer: {
-    backgroundColor: "white",
-    height: 50,
-    width: 50,
+    backgroundColor: "#00ff85",
+    height: 70,
+    width: 70,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 30,
   },
-  detailsText: {
+  iconContainerMacro: {
+    backgroundColor: "#04f5ff",
+    height: 10,
+    width: 10,
+
+    borderRadius: 30,
+  },
+  iconContainerMicro: {
+    backgroundColor: "#00ff85",
+    height: 10,
+    width: 10,
+
+    borderRadius: 30,
+  },
+  iconContainerIng: {
+    backgroundColor: "#e90052",
+    height: 10,
+    width: 10,
+    lineHeight: 22,
+    borderRadius: 30,
+  },
+  detailsTextMacro: {
+    marginTop: "30px",
+    lineHeight: 32,
+    fontSize: 16,
+    color: "white",
+  },
+  detailsTextMicro: {
     marginTop: 10,
     lineHeight: 22,
     fontSize: 16,

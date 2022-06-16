@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
 import Home from "./Home";
 import Signup from "./Signup";
 import Login from "./Login";
@@ -8,7 +8,45 @@ import Details from "./Details";
 import { CartProvider } from "./context/cartContext";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+//import { Auth, Hub } from "aws-amplify";
 export default function App() {
+  /* const [user, setUser] = useState(undefined);
+
+  const checkUser = async () => {
+    try {
+      const authUser = await Auth.currentAuthenticatedUser({
+        bypassCache: true,
+      });
+      setUser(authUser);
+    } catch (e) {
+      setUser(null);
+    }
+  };
+
+  useEffect(() => {
+    checkUser();
+  }, []);
+
+  useEffect(() => {
+    const listener = (data) => {
+      if (data.payload.event === "signIn" || data.payload.event === "signOut") {
+        checkUser();
+      }
+      console.log(user);
+    };
+
+    Hub.listen("auth", listener);
+    return () => Hub.remove("auth", listener);
+  }, []);
+
+  if (user === undefined) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
+*/
   const Stack = createStackNavigator();
   const persistenceFunctions = (() => {
     return __DEV__
@@ -25,18 +63,7 @@ export default function App() {
         }
       : {};
   })();
-  /* const config = {
-    screens: {
-      Home: "/",
-      Signin: "/signup",
-      Login: "/login",
-      Recipe: "/recipe",
-    },
-  };
-  const linking = {
-    prefixes: ["https://example.com"],
-    config,
-  };*/
+
   return (
     <CartProvider>
       <NavigationContainer

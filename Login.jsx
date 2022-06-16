@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -6,15 +6,45 @@ import {
   Pressable,
   TextInput,
   SafeAreaView,
+  useWindowDimensions,
+  Alert,
 } from "react-native";
 import { Link } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/FontAwesome";
+import { useForm, Controller } from "react-hook-form";
+import CustomInput from "./CustomInput";
+import CustomButton from "./CustomButton";
+//import { Auth } from "aws-amplify";
 export default function Login({ navigation }) {
+  const { height } = useWindowDimensions();
+  const [loading, setLoading] = useState(false);
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false,
     });
   }, [navigation]);
+  const onSignInPressed = async (data) => {
+    if (loading) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await Auth.signIn(data.username, data.password);
+      console.log(response);
+      navigation.navigate("recipe");
+    } catch (e) {
+      navigation.navigate("recipe");
+      Alert.alert("Oops", e.message);
+    }
+    setLoading(false);
+  };
+
   return (
     <View style={styles.container}>
       <View>
@@ -25,25 +55,43 @@ export default function Login({ navigation }) {
       <View style={styles.footer}>
         {" "}
         <View style={styles.action}>
-          <Text style={styles.text}>Email</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="  useless placeholder"
-            keyboardType="numeric"
+          <Text style={styles.text}>Username</Text>
+          <CustomInput
+            name="name"
+            control={control}
+            placeholder=" Name"
+            rules={{
+              required: "Name is required",
+              minLength: {
+                value: 3,
+                message: "Name should be at least 3 characters long",
+              },
+              maxLength: {
+                value: 24,
+                message: "Name should be max 24 characters long",
+              },
+            }}
           />
           <br />
           <Text style={styles.text}> Password</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="  useless placeholder"
-            keyboardType="numeric"
+          <CustomInput
+            name="password"
+            placeholder="Password"
+            secureTextEntry
+            control={control}
+            rules={{
+              required: "Password is required",
+              minLength: {
+                value: 3,
+                message: "Password should be minimum 3 characters long",
+              },
+            }}
           />
-          <Pressable
-            style={styles.button}
-            onPress={() => navigation.navigate("recipe")}
-          >
-            <Text style={styles.textButton}>Connexion</Text>
-          </Pressable>
+          <CustomButton
+            text={loading ? "Loading..." : "recipe"}
+            onPress={handleSubmit(onSignInPressed)}
+          />
+
           <br />
           <Text style={styles.textSwitch}>
             Don't Have an account,{" "}

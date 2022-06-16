@@ -12,14 +12,15 @@ import {
 } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import Icon from "react-native-vector-icons/FontAwesome";
+
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Avatar, Button, Card, Title, Paragraph } from "react-native-paper";
-
+import Icon from "react-native-vector-icons/FontAwesome";
 import { FlatList, TouchableOpacity } from "react-native-web";
 
 function Recipewishlist({ navigation }) {
   const [cart, setCart] = useContext(CartContext);
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false,
@@ -30,71 +31,68 @@ function Recipewishlist({ navigation }) {
   );
 
   console.log(cartItems);
-  // const removeFromCart = (id) => {
-  /* const newCart = cartItems.splice(1);
-    setCartItems(newCart);
-    localStorage.setItem("item", JSON.stringify(newCart));
-    console.log(cart);*/
-
-  /*const newCart = cart.splice(i, 1);
-    console.log(newCart);
-    setCart(newCart);*/
-  //  setCartItems(cartItems.filter((item) => item !== id));
-  /*setCartItems(cartItems.filter((item) => item !== itemToRemove));*/
-  // setCart(cart.filter((item) => item !== id));
-
-  //localStorage.removeItem(cart);
-  //console.log(cart);
-  //};
-  /* const empty = () => {
-    setCartItems([]);
-    setCart([]);
-  };
-*/
 
   useEffect(() => {
     setCart(cartItems);
     localStorage.setItem("item", JSON.stringify(cartItems));
   }, []);
-  /* const EmptyCart = () => {
-    return (
-      <div className="emptycart" id="#">
-        <div>
-          <Button
-            style={{ margin: "0 auto", display: "block", fontWeight: "700" }}
-            onClick={back}
-            size="large"
-            type="button"
-            variant="contained"
-            color="primary"
-          >
-            Choisir le menu 🍲
-          </Button>
-          <img className="image-error" src={emptyy} />
-        </div>
-      </div>
-    );
-  };*/
-  const RenderCartItems = () => {
+  const EmptyWishList = () => {
     return (
       <View style={styles.container}>
         <View>
-          <Text style={styles.title}>Your List Of Favorites Recipes </Text>
+          <Text style={styles.title}> List Of Favorites Recipes 🍲 </Text>
+        </View>
+        <View style={styles.action}>
+          <br />
+        </View>
+        <View style={styles.footer}>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+
+              backgroundColor: "white",
+            }}
+          >
+            <Image
+              source={require("./assets/recipe.png")}
+              style={styles.tinyLogo}
+            />
+
+            <Text style={styles.textEmpty}> Your List is empty 🍲 </Text>
+            <br />
+
+            <Pressable
+              style={styles.button}
+              onPress={() => navigation.navigate("searchRecipe")}
+            >
+              <Text style={styles.text}>Add Recipes</Text>
+            </Pressable>
+          </View>
+        </View>
+      </View>
+    );
+  };
+  const RenderWishList = () => {
+    return (
+      <View style={styles.container}>
+        <View>
+          <Text style={styles.title}> List Of Favorites Recipes 🍲 </Text>
         </View>
         <View style={styles.action}>
           <br />
         </View>
 
         <ScrollView style={styles.footer}>
-          {cartItems.map((recipe, index) => (
+          {cart.map((recipe, index) => (
             <Card style={styles.card}>
-              <Card.Cover source={recipe.image} />
+              <Card.Cover style={styles.image} source={recipe.image} />
               <Card.Content>
                 <Title>{recipe.name}</Title>
-                <Paragraph>{recipe.cal} Cal</Paragraph>
+                <Paragraph>{recipe.cal.toFixed()} Cal</Paragraph>
                 <Paragraph>{recipe.description} </Paragraph>
               </Card.Content>
-              <Card.Actions></Card.Actions>
             </Card>
           ))}
         </ScrollView>
@@ -103,7 +101,7 @@ function Recipewishlist({ navigation }) {
   };
   return (
     <>
-      <RenderCartItems />
+      {cart.length === 0 ? <EmptyWishList></EmptyWishList> : <RenderWishList />}
     </>
   );
 }
@@ -121,7 +119,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderTopLeftRadius: "20%",
     borderTopRightRadius: "20%",
-    marginTop: "16%",
+
     paddingHorizontal: 200,
   },
   action: {
@@ -149,7 +147,7 @@ const styles = StyleSheet.create({
 
     marginLeft: "auto",
     marginRight: "auto",
-
+    borderRadius: "50px",
     backgroundColor: "#e90052",
     padding: "15px",
   },
@@ -164,6 +162,7 @@ const styles = StyleSheet.create({
     boxShadow: "5px 2px 12px	#38003c",
   },
   cardAction: {
+    margin: 5,
     marginRight: "auto",
     marginLeft: "auto",
     padding: "10px",
@@ -175,6 +174,15 @@ const styles = StyleSheet.create({
     fontSize: "15px",
     fontWeight: 600,
     color: "white",
+  },
+  textEmpty: {
+    fontSize: "25px",
+    fontWeight: 600,
+    color: "black",
+  },
+  tinyLogo: {
+    width: 300,
+    height: 300,
   },
 });
 export default Recipewishlist;

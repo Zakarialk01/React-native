@@ -55,12 +55,12 @@ const Recipesearch = ({ navigation }) => {
     localStorage.setItem("query", query);
     getRecipes(query);
   };
-  const addToWishlist = () => {
+  const addToWishlist = (recipe) => {
     const favorites = {
-      name: recipes.label,
-      cal: recipes.calories,
-      description: recipes.cuisineType,
-      image: recipes.image,
+      name: recipe.label,
+      cal: recipe.calories,
+      description: recipe.cuisineType,
+      image: recipe.image,
     };
     setCart((curr) => [...curr, favorites]);
   };
@@ -88,13 +88,13 @@ const Recipesearch = ({ navigation }) => {
       </View>
 
       <ScrollView style={styles.footer}>
-        {recipes.map((recipe, index) => (
+        {recipes.map(({ recipe }, index) => (
           <Card style={styles.card} left={LeftContent}>
-            <Card.Cover source={recipe.recipe.image} />
+            <Card.Cover source={recipe.image} />
             <Card.Content>
-              <Title>{recipe.recipe.label}</Title>
-              <Paragraph>{recipe.recipe.calories.toFixed(0)} Cal</Paragraph>
-              <Paragraph>{recipe.recipe.cuisineType} </Paragraph>
+              <Title>{recipe.label}</Title>
+              <Paragraph>{recipe.calories.toFixed(0)} Cal</Paragraph>
+              <Paragraph>{recipe.cuisineType} </Paragraph>
             </Card.Content>
             <Card.Actions>
               <TouchableOpacity
@@ -102,23 +102,24 @@ const Recipesearch = ({ navigation }) => {
                 onPress={() => {
                   /* 1. Navigate to the Details route with params */
                   navigation.navigate("Details", {
-                    title: recipes.label,
-                    calories: recipes.calories,
-                    image: recipes.image,
-                    ingredients: recipes.ingredients,
-                    cautions: recipes.cautions,
-                    cuisineType: recipes.cuisineType,
-                    healthLabels: recipes.healthLabels,
-                    totalWeight: recipes.totalWeight,
-                    totalNutrients: recipes.totalNutrients,
-                    digest: recipes.digest,
+                    recipe,
+                    // title: recipes.recipe.label,
+                    // calories: recipes.calories,
+                    // image: recipes.image,
+                    // ingredients: recipes.ingredients,
+                    // cautions: recipes.cautions,
+                    // cuisineType: recipes.cuisineType,
+                    // healthLabels: recipes.healthLabels,
+                    // totalWeight: recipes.totalWeight,
+                    // totalNutrients: recipes.totalNutrients,
+                    // digest: recipes.digest,
                   });
                 }}
               >
                 <Text style={styles.text}>View Detail</Text>
               </TouchableOpacity>
               <TouchableOpacity>
-                <Text style={styles.text} onPress={addToWishlist}>
+                <Text style={styles.text} onPress={() => addToWishlist(recipe)}>
                   ❤️
                 </Text>
               </TouchableOpacity>
