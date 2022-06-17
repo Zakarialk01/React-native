@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { CartContext } from "./context/cartContext";
+import { CartContext } from "../context/cartContext";
 
 import {
   StyleSheet,
@@ -56,7 +56,7 @@ function Recipewishlist({ navigation }) {
             }}
           >
             <Image
-              source={require("./assets/recipe.png")}
+              source={require("../assets/recipe.png")}
               style={styles.tinyLogo}
             />
 

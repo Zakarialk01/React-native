@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
-import Home from "./Home";
-import Signup from "./Signup";
-import Login from "./Login";
-import Recipe from "./Recipe";
-import Details from "./Details";
+import Home from "./Home/Home";
+import Signup from "./Auth/Signup";
+import Login from "./Auth/Login";
+import Recipe from "./Recipe/Recipe";
+import Details from "./Recipe/Details";
 import { CartProvider } from "./context/cartContext";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";

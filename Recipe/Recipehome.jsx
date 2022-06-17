@@ -16,9 +16,9 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Avatar, Button, Card, Title, Paragraph } from "react-native-paper";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { FlatList, TouchableOpacity } from "react-native-web";
-import categoriesData from "./assets/data/categoriesData";
-import popularData from "./assets/data/popularData";
-import colors from "./assets/colors/colors";
+import categoriesData from "../assets/data/categoriesData";
+import popularData from "../assets/data/popularData";
+import colors from "../assets/colors/colors";
 
 function Recipehome({ navigation }) {
   const signOut = () => {

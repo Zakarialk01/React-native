@@ -24,7 +24,7 @@ const Home = ({ navigation }) => {
         }}
       >
         <Image
-          source={require("./assets/recipe.png")}
+          source={require("../assets/recipe.png")}
           style={styles.tinyLogo}
         />
       </View>

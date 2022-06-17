@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   StyleSheet,
   Text,
@@ -6,56 +6,52 @@ import {
   Pressable,
   TextInput,
   SafeAreaView,
-  useWindowDimensions,
-  Alert,
 } from "react-native";
 import { Link } from "@react-navigation/native";
+
 import Icon from "react-native-vector-icons/FontAwesome";
-import { useForm, Controller } from "react-hook-form";
-import CustomInput from "./CustomInput";
-import CustomButton from "./CustomButton";
-//import { Auth } from "aws-amplify";
-export default function Login({ navigation }) {
-  const { height } = useWindowDimensions();
-  const [loading, setLoading] = useState(false);
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+import CustomInput from "../CustomElements/CustomInput";
+import CustomButton from "../CustomElements/CustomButton";
+import { useForm } from "react-hook-form";
+import { Auth } from "aws-amplify";
+
+const EMAIL_REGEX =
+  /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+export default function Signup({ navigation }) {
+  const { control, handleSubmit, watch } = useForm();
+  const pwd = watch("password");
+
+  const onRegisterPressed = async (data) => {
+    const { password, email, name } = data;
+    try {
+      await Auth.signUp({
+        password,
+        attributes: { email, name },
+      });
+
+      navigation.navigate("recipe");
+    } catch {
+      navigation.navigate("recipe");
+    }
+  };
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false,
     });
   }, [navigation]);
-  const onSignInPressed = async (data) => {
-    if (loading) {
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const response = await Auth.signIn(data.username, data.password);
-      console.log(response);
-      navigation.navigate("recipe");
-    } catch (e) {
-      navigation.navigate("recipe");
-      Alert.alert("Oops", e.message);
-    }
-    setLoading(false);
-  };
-
   return (
     <View style={styles.container}>
       <View>
         <Text style={styles.title}>
-          Login <Icon name="sign-in" size={28} color="#fff" />
+          Sign Up <Icon name="sign-in" size={28} color="#fff" />
         </Text>
       </View>
       <View style={styles.footer}>
         {" "}
         <View style={styles.action}>
-          <Text style={styles.text}>Username</Text>
+          <Text style={styles.text}>Full Name</Text>
+
           <CustomInput
             name="name"
             control={control}
@@ -73,30 +69,42 @@ export default function Login({ navigation }) {
             }}
           />
           <br />
+          <Text style={styles.text}>Email</Text>
+
+          <CustomInput
+            name=" email"
+            control={control}
+            placeholder=" Email"
+            rules={{
+              required: "Email is required",
+              pattern: { value: EMAIL_REGEX, message: "Email is invalid" },
+            }}
+          />
+          <br />
           <Text style={styles.text}> Password</Text>
           <CustomInput
-            name="password"
+            name=" password"
+            control={control}
             placeholder="Password"
             secureTextEntry
-            control={control}
             rules={{
               required: "Password is required",
               minLength: {
-                value: 3,
-                message: "Password should be minimum 3 characters long",
+                value: 8,
+                message: "Password should be at least 8 characters long",
               },
             }}
           />
-          <CustomButton
-            text={loading ? "Loading..." : "recipe"}
-            onPress={handleSubmit(onSignInPressed)}
-          />
 
+          <CustomButton
+            text="Register"
+            onPress={handleSubmit(onRegisterPressed)}
+          />
           <br />
           <Text style={styles.textSwitch}>
-            Don't Have an account,{" "}
+            Already Have an account,{" "}
             <Text style={{ color: "#e90052" }}>
-              <Link to={{ screen: "signup" }}>Sign Up</Link>
+              <Link to={{ screen: "login" }}>Login</Link>
             </Text>
           </Text>
         </View>
@@ -140,7 +148,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderTopLeftRadius: "50%",
     borderTopRightRadius: "50%",
-    marginTop: "35%",
+    marginTop: "20%",
     paddingHorizontal: 200,
   },
   container: {

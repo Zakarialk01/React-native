@@ -1,28 +1,19 @@
 import React from "react";
 
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  Pressable,
-  Image,
-  ScrollView,
-} from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { StyleSheet, Text, TextInput, View, ScrollView } from "react-native";
+
 import Icon from "react-native-vector-icons/FontAwesome";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
 import { Avatar, Button, Card, Title, Paragraph } from "react-native-paper";
 import { useEffect, useState, useContext } from "react";
 import { FlatList, TouchableOpacity } from "react-native-web";
-import { CartContext } from "./context/cartContext";
+import { CartContext } from "../context/cartContext";
 
 const Recipesearch = ({ navigation }) => {
   const [cart, setCart] = useContext(CartContext);
   const APP_ID = "040594c7";
   const APP_KEY = "995bae889439ba857a9aea02299ce4c0	";
-  const LeftContent = (props) => <Avatar.Icon {...props} icon="folder" />;
+
   const [recipes, setRecipes] = useState([]);
   const [query, setquery] = useState("");
   React.useLayoutEffect(() => {
@@ -63,9 +54,10 @@ const Recipesearch = ({ navigation }) => {
       image: recipe.image,
     };
     setCart((curr) => [...curr, favorites]);
+    alert("added");
   };
   console.log(cart);
-  //dont get real data
+
   return (
     <View style={styles.container}>
       <View>
@@ -89,41 +81,37 @@ const Recipesearch = ({ navigation }) => {
 
       <ScrollView style={styles.footer}>
         {recipes.map(({ recipe }, index) => (
-          <Card style={styles.card} left={LeftContent}>
+          <Card
+            style={styles.card}
+            onPress={() => {
+              navigation.navigate("Details", {
+                recipe,
+              });
+            }}
+          >
             <Card.Cover source={recipe.image} />
             <Card.Content>
               <Title>{recipe.label}</Title>
-              <Paragraph>{recipe.calories.toFixed(0)} Cal</Paragraph>
-              <Paragraph>{recipe.cuisineType} </Paragraph>
-            </Card.Content>
-            <Card.Actions>
-              <TouchableOpacity
-                style={styles.cardAction}
-                onPress={() => {
-                  /* 1. Navigate to the Details route with params */
-                  navigation.navigate("Details", {
-                    recipe,
-                    // title: recipes.recipe.label,
-                    // calories: recipes.calories,
-                    // image: recipes.image,
-                    // ingredients: recipes.ingredients,
-                    // cautions: recipes.cautions,
-                    // cuisineType: recipes.cuisineType,
-                    // healthLabels: recipes.healthLabels,
-                    // totalWeight: recipes.totalWeight,
-                    // totalNutrients: recipes.totalNutrients,
-                    // digest: recipes.digest,
-                  });
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-around",
                 }}
               >
-                <Text style={styles.text}>View Detail</Text>
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <Text style={styles.text} onPress={() => addToWishlist(recipe)}>
-                  ❤️
-                </Text>
-              </TouchableOpacity>
-            </Card.Actions>
+                <Paragraph>{recipe.calories.toFixed(0)} Cal</Paragraph>
+                <Paragraph>{recipe.cuisineType} </Paragraph>
+                <TouchableOpacity>
+                  <Icon
+                    style={styles.icon}
+                    name="heart"
+                    color="red"
+                    size={28}
+                    onPress={() => addToWishlist(recipe)}
+                  />
+                </TouchableOpacity>
+              </View>
+            </Card.Content>
           </Card>
         ))}
       </ScrollView>
@@ -186,19 +174,13 @@ const styles = StyleSheet.create({
     marginTop: "5%",
     boxShadow: "5px 2px 12px	#38003c",
   },
-  cardAction: {
-    marginRight: "auto",
-    marginLeft: "auto",
-    padding: "10px",
-    border: "none",
 
-    backgroundColor: "#38003c",
-  },
   text: {
     fontSize: "15px",
     fontWeight: 600,
     color: "white",
   },
+  icon: { margin: "0 auto" },
 });
 
 export default Recipesearch;

@@ -1,57 +1,57 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
   View,
-  Pressable,
-  TextInput,
-  SafeAreaView,
+  useWindowDimensions,
+  Alert,
 } from "react-native";
 import { Link } from "@react-navigation/native";
-
 import Icon from "react-native-vector-icons/FontAwesome";
-import CustomInput from "./CustomInput";
-import CustomButton from "./CustomButton";
 import { useForm } from "react-hook-form";
-import { Auth } from "aws-amplify";
-
-const EMAIL_REGEX =
-  /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-
-export default function Signup({ navigation }) {
-  const { control, handleSubmit, watch } = useForm();
-  const pwd = watch("password");
-
-  const onRegisterPressed = async (data) => {
-    const { password, email, name } = data;
-    try {
-      await Auth.signUp({
-        password,
-        attributes: { email, name },
-      });
-
-      navigation.navigate("recipe");
-    } catch {
-      navigation.navigate("recipe");
-    }
-  };
+import CustomInput from "../CustomElements/CustomInput";
+import CustomButton from "../CustomElements/CustomButton";
+//import { Auth } from "aws-amplify";
+export default function Login({ navigation }) {
+  const [loading, setLoading] = useState(false);
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false,
     });
   }, [navigation]);
+  const onSignInPressed = async (data) => {
+    if (loading) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await Auth.signIn(data.username, data.password);
+      console.log(response);
+      navigation.navigate("recipe");
+    } catch (e) {
+      navigation.navigate("recipe");
+      Alert.alert("Oops", e.message);
+    }
+    setLoading(false);
+  };
+
   return (
     <View style={styles.container}>
       <View>
         <Text style={styles.title}>
-          Sign Up <Icon name="sign-in" size={28} color="#fff" />
+          Login <Icon name="sign-in" size={28} color="#fff" />
         </Text>
       </View>
       <View style={styles.footer}>
         {" "}
         <View style={styles.action}>
-          <Text style={styles.text}>Full Name</Text>
-
+          <Text style={styles.text}>Username</Text>
           <CustomInput
             name="name"
             control={control}
@@ -69,42 +69,30 @@ export default function Signup({ navigation }) {
             }}
           />
           <br />
-          <Text style={styles.text}>Email</Text>
-
-          <CustomInput
-            name=" email"
-            control={control}
-            placeholder=" Email"
-            rules={{
-              required: "Email is required",
-              pattern: { value: EMAIL_REGEX, message: "Email is invalid" },
-            }}
-          />
-          <br />
           <Text style={styles.text}> Password</Text>
           <CustomInput
-            name=" password"
-            control={control}
+            name="password"
             placeholder="Password"
             secureTextEntry
+            control={control}
             rules={{
               required: "Password is required",
               minLength: {
-                value: 8,
-                message: "Password should be at least 8 characters long",
+                value: 3,
+                message: "Password should be minimum 3 characters long",
               },
             }}
           />
-
           <CustomButton
-            text="Register"
-            onPress={handleSubmit(onRegisterPressed)}
+            text={loading ? "Loading..." : "recipe"}
+            onPress={handleSubmit(onSignInPressed)}
           />
+
           <br />
           <Text style={styles.textSwitch}>
-            Already Have an account,{" "}
+            Don't Have an account,{" "}
             <Text style={{ color: "#e90052" }}>
-              <Link to={{ screen: "login" }}>Login</Link>
+              <Link to={{ screen: "signup" }}>Sign Up</Link>
             </Text>
           </Text>
         </View>
@@ -148,7 +136,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderTopLeftRadius: "50%",
     borderTopRightRadius: "50%",
-    marginTop: "20%",
+    marginTop: "35%",
     paddingHorizontal: 200,
   },
   container: {
