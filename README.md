@@ -1,6 +1,6 @@
 # React-native
 Recipe-app
-App qui permet de chercher de recettes en ayant tous les details.
+
 J'ai utilisé react-native-web en travaillant sur l'appareil Iphone 12 pro .donc si vous démarrer l'app sur le web browser veuillez utiliser le responsive 
 iphone 12 pro.
 
